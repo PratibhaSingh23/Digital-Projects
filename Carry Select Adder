@@ -1,0 +1,40 @@
+module Carry_Select_Adder(S, Cout, A, B, ci);
+output [15:0] S;
+output Cout;
+input [15:0] A, B;
+input ci;
+
+wire r0, t0, t1, r1, t2, t3, r2, t4, t5;
+wire [3:0] w0, w1, w2, w3, w4, w5;
+// stage 1 and 2
+CLA CLA0(A[3:0],B[3:0],ci,r0,S[3:0]);// A,B,ci,co,S....where A,B=> 4bit inputs,,,, ci = carry_in,,,, co= output carry,,,,, S= 4bit sum
+CLA CLA1(A[7:4],B[7:4],0,t0,w0[3:0]);// A,B=> 4bit inputs,,,, ci = carry_in,,,,, co= output carry,,,,, S= 4bit sum
+CLA CLA2(A[7:4],B[7:4],1,t1,w1[3:0]);// A,B=> 4bit inputs,,,, ci = carry_in,,,,, co= output carry,,,,, S= 4bit sum
+
+MUX_2to1 m0(S[4], r0, w1[0],w0[0]); //OUT, SEL, IN1,IN0
+MUX_2to1 m1(S[5], r0, w1[1],w0[1]);
+MUX_2to1 m2(S[6], r0, w1[2],w0[2]);
+MUX_2to1 m3(S[7], r0, w1[3],w0[3]);
+MUX_2to1 m4(r1, r0, t1, t0);
+
+// Stage 3
+CLA CLA3(A[11:8],B[11:8],0,t2,w2[3:0]);// A,B=> 4bit inputs,,,, ci = carry_in,,,,, co= output carry,,,,, S= 4bit sum
+CLA CLA4(A[11:8],B[11:8],1,t3,w3[3:0]);
+
+MUX_2to1 m5(S[8], r1, w3[0],w2[0]); //OUT, SEL, IN1,IN0
+MUX_2to1 m6(S[9], r1, w3[1],w2[1]);
+MUX_2to1 m7(S[10], r1, w3[2],w2[2]);
+MUX_2to1 m8(S[11], r1, w3[3],w2[3]);
+MUX_2to1 m9(r2, r1, t3, t2);
+
+//stage 4
+CLA CLA5(A[15:12],B[15:12],0,t4,w4[3:0]);// A,B=> 4bit inputs,,,, ci = carry_in,,,,, co= output carry,,,,, S= 4bit sum
+CLA CLA6(A[15:12],B[15:12],1,t5,w5[3:0]);
+
+MUX_2to1 m10(S[12], r2, w5[0],w4[0]); //OUT, SEL, IN1,IN0
+MUX_2to1 m11(S[13], r2, w5[1],w4[1]);
+MUX_2to1 m12(S[14], r2, w5[2],w4[2]);
+MUX_2to1 m13(S[15], r2, w5[3],w4[3]);
+MUX_2to1 m14(Cout, r2, t5, t4);
+
+endmodule
