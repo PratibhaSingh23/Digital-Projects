@@ -1,0 +1,7 @@
+module MUX_2to1(OUT, SEL, IN1,IN0);
+output reg OUT;
+input SEL, IN1, IN0;
+always@(*)
+OUT <= SEL ? IN1 : IN0 ;
+endmodule
+
